@@ -4,12 +4,12 @@ let assert = require('chai').assert;
 let {generateMessage} = require('./message');
 
 describe('generateMessage', ()=>{
-    it('should generate correct message object', ()=>{
+    it('should generate correct message object', async ()=>{
         let from = "Denys";
         let text = "some message";
         let message = generateMessage(from, text);
 
-        expect(typeof message.createdAt).toBe('number');
-        assert.include(message, {from, text}, "message contains data");
+        await expect(typeof message.createdAt).toBe('number');
+        await assert.include(message, {from, text}, "message contains data");
     });
 });
