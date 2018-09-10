@@ -20,12 +20,32 @@ function scrollToButtom (){
         
 socket.on('connect', function () {
     console.log('Connected to server');
+    let params = jQuery.deparam(window.location.search);
 
+    socket.emit('join', params, async function(err){
+        if(err){
+            alert(err);
+            window.location.href='/';
+        } else {
+            console.log('No error');
+        }
+    })
 });
 
 socket.on('disconnect', function () {
     console.log('Disconnected from server');
 });
+
+socket.on('updateUserList', function(users){
+    let ul = jQuery('<ul></ul>');
+
+    users.forEach(function(user){
+        ul.append(jQuery('<li></li>').text(user));
+    });
+
+    jQuery('#users').html(ul);
+    console.log(users);
+})
 
 
 socket.on('newMessage', function (message) {
@@ -40,19 +60,9 @@ socket.on('newMessage', function (message) {
 
     scrollToButtom();
 
-    // console.log("new message", message);
-    // let li = jQuery('<li></li>');
-    // li.text(`${message.createdAt} ${message.from}: ${message.text}`);
 
-    // jQuery('#messages').append(li);
 });
 
-socket.emit('createMessage', {
-    from:'Vlad',
-    text:'Hi'
-}, async function (data){
-    await console.log(data);
-});
 
 socket.on('newLocationMessage', function(message){
     let template = jQuery('#location-message-template').html();
@@ -66,14 +76,6 @@ socket.on('newLocationMessage', function(message){
 
     scrollToButtom();
 
-
-    // let li = jQuery('<li></li>');
-    // let a = jQuery('<a target="_blank">My current location</a>');
-
-    // li.text(`${message.createdAt} ${message.from}: `);
-    // a.attr('href', message.url);
-    // li.append(a);
-    // jQuery('#messages').append(li);
 });
 
 jQuery('#message-form').on('submit', function(e){
