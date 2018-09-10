@@ -38,13 +38,24 @@ io.on('connection',(socket)=>{
     });
 
     socket.on('createMessage', (newMessage, callback) =>{
-        io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+        let user = users.getUser(socket.id);
+
+        if(user && isRealString(newMessage.text)){
+            io.to(user.room).emit('newMessage', generateMessage(newMessage.from, newMessage.text));   
+        }
+
         callback();
     });
 
     socket.on('createLocationMessage', (coords)=>{
-        io.emit('newLocationMessage', generateLocationMessage('Admin',coords.latitude, coords.longitude))
-    })
+
+        let user = users.getUser(socket.id);
+
+        if(user){
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name,coords.latitude, coords.longitude))
+        }
+
+    });
 
     socket.on('disconnect',()=>{
         let user = users.removeUser(socket.id);
@@ -54,8 +65,8 @@ io.on('connection',(socket)=>{
             io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left chat`));
 
         }
-    })
-})
+    });
+});
 
 server.listen(3000, () => {
     console.log("server is started on port 3000");

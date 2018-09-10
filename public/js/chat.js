@@ -59,8 +59,6 @@ socket.on('newMessage', function (message) {
     jQuery('#messages').append(html);
 
     scrollToButtom();
-
-
 });
 
 
@@ -82,9 +80,10 @@ jQuery('#message-form').on('submit', function(e){
     e.preventDefault();
 
     let messageTextBox = jQuery('[name=message]');
+    let params = jQuery.deparam(window.location.search);
 
     socket.emit('createMessage', {
-        from: 'user',
+        from: params.name,
         text: messageTextBox.val()
     }, function (){
         messageTextBox.val('');

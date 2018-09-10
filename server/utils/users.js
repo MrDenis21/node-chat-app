@@ -14,7 +14,6 @@ class Users {
         let index = this.users.indexOf(userToDelete);
         console.log(userToDelete);
         this.users.splice(index,1);
-        // console.log(this.users);
         return userToDelete;
     }
 
